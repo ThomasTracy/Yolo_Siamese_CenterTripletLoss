@@ -56,3 +56,5 @@ the result seems like:
       
 Test should be made on batched of images, if run on vdieo is needed. Then video needs to be converted into images  
 
+## show result
+use path/to/display.py to show the result of test results

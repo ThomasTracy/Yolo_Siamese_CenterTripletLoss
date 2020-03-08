@@ -245,4 +245,4 @@ if __name__ == '__main__':
         test_one_img('D:/Data/self_collected/' + img)
         print('Done writing %s'%img)
 
-    # test_display_one_img('D:/Data/self_collected/351.JPG')
+    # test_display_one_img('path/to/351.JPG')

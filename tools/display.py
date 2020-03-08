@@ -14,6 +14,8 @@ parser.add_argument("--class_name_path", type=str, default="./data/my_data/traff
                     help="The path of the class names.")
 parser.add_argument("--class_name_path_all", type=str, default="./data/my_data/traffic_sign_all.names",
                     help="The path of the class names.")
+parser.add_argument("--output_path", type=str, default='./data/test_result.txt',
+                    help="the path of txt which save the detections results")
 args = parser.parse_args()
 
 args.classes = read_class_names(args.class_name_path)
@@ -24,7 +26,7 @@ color_table = get_color_table(args.num_class)
 
 
 def display_results():
-    result_txt = args.result_path
+    result_txt = output_path
     with open(result_txt, 'r') as f:
         lines = f.readlines()
         lines.sort(key=lambda x: int(x.split(' ')[0].split('/')[-1][:-4]))

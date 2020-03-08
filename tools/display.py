@@ -10,9 +10,9 @@ from utils.plot_utils import get_color_table, plot_one_box
 
 parser = argparse.ArgumentParser(description="Paser for display")
 
-parser.add_argument("--class_name_path", type=str, default="/home/tracy/YOLOv3_TensorFlow/data/my_data/traffic_sign.names",
+parser.add_argument("--class_name_path", type=str, default="./data/my_data/traffic_sign.names",
                     help="The path of the class names.")
-parser.add_argument("--class_name_path_all", type=str, default="/home/tracy/YOLOv3_TensorFlow/data/my_data/traffic_sign_all.names",
+parser.add_argument("--class_name_path_all", type=str, default="./data/my_data/traffic_sign_all.names",
                     help="The path of the class names.")
 args = parser.parse_args()
 
@@ -24,7 +24,7 @@ color_table = get_color_table(args.num_class)
 
 
 def display_results():
-    result_txt = 'D:/Data/test_result/detect_result_self_collect_all.txt'
+    result_txt = args.result_path
     with open(result_txt, 'r') as f:
         lines = f.readlines()
         lines.sort(key=lambda x: int(x.split(' ')[0].split('/')[-1][:-4]))

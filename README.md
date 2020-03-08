@@ -51,7 +51,7 @@ run test_images.py
 the output will be saved in YOLOv3_TensorFlow/data/test_result.txt
 the result seems like:
 
-**path of input image       x0 of bbox          y0                x1            y1           class of traffic sign**      
+**path of input image     \t /t  x0 of bbox          y0                x1            y1           class of traffic sign**      
       path/to/2.JPG           2173.98         897.18            2256.66      981.90                    48
       
 Test should be made on batched of images, if run on vdieo is needed. Then video needs to be converted into images

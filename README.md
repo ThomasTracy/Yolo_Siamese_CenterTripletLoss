@@ -57,4 +57,5 @@ the result seems like:
 Test should be made on batched of images, if run on vdieo is needed. Then video needs to be converted into images  
 
 ## show result
-use path/to/display.py to show the result of test results
+use path/to/display.py to show the result of test results  
+or by debuging can also use **test_display_one_img()** under test_images.py to test and show result of single image

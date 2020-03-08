@@ -35,7 +35,7 @@ parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'tru
                     help="Whether to use the letterbox resize.")
 parser.add_argument("--class_name_path", type=str, default="./data/my_data/traffic_sign.names",
                     help="The path of the class names.")
-parser.add_argument("--class_name_path_all", type=str, default="D:/Pycharm/Projects/YOLOv3_TensorFlow/data/my_data/traffic_sign_all.names",
+parser.add_argument("--class_name_path_all", type=str, default="./data/my_data/traffic_sign_all.names",
                     help="The path of the class names.")
 parser.add_argument("--restore_path", type=str, default="./checkpoint/model-epoch_490_step_66284_loss_0.3861_lr_1e-05",
                     help="The path of the weights to restore.")

@@ -39,6 +39,8 @@ parser.add_argument("--class_name_path_all", type=str, default="D:/Pycharm/Proje
                     help="The path of the class names.")
 parser.add_argument("--restore_path", type=str, default="./checkpoint/model-epoch_490_step_66284_loss_0.3861_lr_1e-05",
                     help="The path of the weights to restore.")
+parser.add_argument("--output_path", type=str, default='./data/test_result.txt',
+                    help="the path of txt which save the detections results")
 args = parser.parse_args()
 
 args.anchors = parse_anchors(args.anchor_path)
@@ -158,7 +160,7 @@ def test_one_img(img_path):
             #         label_index[0]+2) + '\n')
         if isinstance(label_index, np.ndarray):
             label_index = label_index[0]
-        with open('D:/Data/test_result/detect_result_self_collect.txt', 'a+') as f:
+        with open(args.output_path, 'a+') as f:
             f.write(img_path+' '+str(x0)+' '+str(y0)+' '+str(x1)+' '+str(y1)+' '+str(label_index) + '\n')
 
 
@@ -243,6 +245,4 @@ if __name__ == '__main__':
         test_one_img('D:/Data/self_collected/' + img)
         print('Done writing %s'%img)
 
-    # print(os.listdir('/home/tracy/data/TrafficSign_test/Images1'))
     # test_display_one_img('D:/Data/self_collected/351.JPG')
-    # test_one_img('/home/tracy/data/TrafficSign_test/Images1/8.jpg')

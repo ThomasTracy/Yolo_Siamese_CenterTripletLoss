@@ -35,7 +35,7 @@ parser.add_argument("--letterbox_resize", type=lambda x: (str(x).lower() == 'tru
                     help="Whether to use the letterbox resize.")
 parser.add_argument("--class_name_path", type=str, default="./data/my_data/traffic_sign.names",
                     help="The path of the class names.")
-parser.add_argument("--class_name_path_all", type=str, default="./data/my_data/traffic_sign_all.names",
+parser.add_argument("--class_name_path_all", type=str, default="D:/Pycharm/Projects/YOLOv3_TensorFlow/data/my_data/traffic_sign_all.names",
                     help="The path of the class names.")
 parser.add_argument("--restore_path", type=str, default="./checkpoint/model-epoch_490_step_66284_loss_0.3861_lr_1e-05",
                     help="The path of the weights to restore.")
@@ -80,7 +80,8 @@ with sess_yolo.as_default():
 
 
 params = Params('D:/Pycharm/Projects/YOLOv3_TensorFlow/center_triplet_loss/model/parameters.json')
-frozen_graph_path = 'D:\\Pycharm\\Projects\\Triplet-Loss-Tensorflow\\checkpoints\\frozen_graph\\frozen_inference_graph.pb'
+# put the downloaded frozen graph to path\to
+frozen_graph_path = 'path\\to\\frozen_inference_graph.pb'
 with sess_triplet.as_default():
     with graph_triplet.as_default():
         od_graph_def = tf.GraphDef()
@@ -91,16 +92,16 @@ with sess_triplet.as_default():
             tf.import_graph_def(od_graph_def, name='')
 
         inputs = graph_triplet.get_tensor_by_name('image_input:0')
-        outputs = graph_triplet.get_tensor_by_name('classes:0')
+        predict_labels = graph_triplet.get_tensor_by_name('classes:0')
 
-        distance = batch_all_center_triplet_loss(params, outputs)
-        predict_labels = tf.argmin(distance, axis=1)
+        # distance = batch_all_center_triplet_loss(params, outputs)
+        # predict_labels = tf.argmin(distance, axis=1)
 
 
 def test_one_img(img_path):
     img_ori = cv2.imread(img_path)
 
-    img_name = img_path.strip().split('/')[-1]
+    img_name = img_path.strip().split('\\')[-1]
     img_name = img_name.split('.')[0]
 
     if args.letterbox_resize:
@@ -135,8 +136,8 @@ def test_one_img(img_path):
         # Crop the detected traffic signs
         # the bbox of traffic signs must be big enough
         if x1 - x0 > 10 and y1 - y0 > 10 and labels_[j] == 0:
-            img_ori_ = cv2.cvtColor(img_ori, cv2.COLOR_BGR2RGB).astype(np.float32)
-            img_cropped = img_ori_[int(y0):int(y1), int(x0):int(x1)]
+            # img_ori_ = cv2.cvtColor(img_ori, cv2.COLOR_BGR2RGB).astype(np.float32)
+            img_cropped = img_ori[int(y0):int(y1), int(x0):int(x1)]
 
             if img_cropped.shape[0]<10 or img_cropped.shape[1]<10:
                 continue
@@ -144,7 +145,10 @@ def test_one_img(img_path):
             img_cropped = cv2.resize(img_cropped, (params.image_size, params.image_size))
             img_cropped = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2RGB)
             img_cropped = img_cropped / 255.0
-            # cv2.imwrite('D:/Data/TrafficSigns/test/{}_{}.jpg'.format(img_name, j), img_cropped)
+            # cv2.imwrite('D:\\Data\\TrafficSigns\\test_images\\traffic_sign_cropped\\{}_{}.jpg'.format(img_name, j), img_cropped*255.0)
+            # img_cropped_path = 'D:\\Data\\TrafficSigns\\test_images\\traffic_sign_cropped\\{}_{}.jpg'.format(img_name, j)
+            # print(img_cropped_path)
+            # cv2.imwrite('D:\\Data\\TrafficSigns\\test_images\\traffic_sign_cropped\\1_0.jpg', img_cropped*255.0)
 
             if img_cropped.any():
                 # tf.reset_default_graph()
@@ -154,18 +158,21 @@ def test_one_img(img_path):
                         image_input = test_input_fn(img_cropped, params)
                         image_input = sess_triplet.run(image_input)
                         label_index = sess_triplet.run(predict_labels, feed_dict={inputs: image_input})
+                        label_index = label_index[0] + 3
 
             # with open('D:/Data/test_result/detect_result_self_collect.txt', 'a+') as f:
             #     f.write(img_path + ' ' + str(x0) + ' ' + str(y0) + ' ' + str(x1) + ' ' + str(y1) + ' ' + str(
             #         label_index[0]+2) + '\n')
         if isinstance(label_index, np.ndarray):
             label_index = label_index[0]
-        with open(args.output_path, 'a+') as f:
+        with open('D:\Data\TrafficSigns\\test_images/detect_result.txt', 'a+') as f:
             f.write(img_path+' '+str(x0)+' '+str(y0)+' '+str(x1)+' '+str(y1)+' '+str(label_index) + '\n')
 
 
 def test_display_one_img(img_path):
+    print(img_path)
     img_ori = cv2.imread(img_path)
+    print(img_ori.shape)
     if args.letterbox_resize:
         img, resize_ratio, dw, dh = letterbox_resize(img_ori, args.new_size[0], args.new_size[1])
     else:
@@ -218,8 +225,9 @@ def test_display_one_img(img_path):
                     with sess_triplet.as_default():
                         image_input = test_input_fn(img_cropped, params)
                         image_input = sess_triplet.run(image_input)
-                        label_index, out = sess_triplet.run([predict_labels, outputs], feed_dict={inputs: image_input})
+                        label_index = sess_triplet.run(predict_labels, feed_dict={inputs: image_input})
                         label_index = label_index[0] + 3
+                        print(label_index)
                         # with open('D:/Data/test_result/outputs.txt', 'w') as ff:
                         #     ff.writelines(ff)
                 # np.savetxt('D:/Data/test_result/outputs.txt', out, fmt='%f', delimiter=',')
@@ -238,11 +246,13 @@ def test_display_one_img(img_path):
 
 if __name__ == '__main__':
 
-    dir_list = os.listdir('D:/Data/self_collected')
+    dir_list = os.listdir('D:\\Data\\TrafficSigns\\test_images\\Images1')
     dir_list.sort(key=lambda x: int(x[:-4]))
     for img in tqdm(dir_list):
         print("Writting %s"%img)
-        test_one_img('D:/Data/self_collected/' + img)
+        test_one_img(os.path.join('D:\\Data\\TrafficSigns\\test_images\\Images1', img))
         print('Done writing %s'%img)
 
-    # test_display_one_img('path/to/351.JPG')
+    # # print(os.listdir('/home/tracy/data/TrafficSign_test/Images1'))
+    # test_display_one_img('D:\Data\TrafficSigns\\test_images\Images1\\149.jpg')
+    # # test_one_img('/home/tracy/data/TrafficSign_test/Images1/8.jpg')
